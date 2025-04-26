@@ -1,6 +1,6 @@
 // src/components/Card/StatCard.jsx
 import React from 'react';
-import { Card, CardContent, Typography, Box, CircularProgress, alpha } from '@mui/material';
+import { Card, CardContent, Typography, Box, CircularProgress, alpha, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -23,15 +23,15 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const IconContainer = styled(Box)(({ theme, color }) => ({
-  backgroundColor: alpha(color, 0.15),
+const IconContainer = styled(Box)(({ theme, colorValue }) => ({
+  backgroundColor: alpha(colorValue, 0.15),
   borderRadius: '12px',
   padding: theme.spacing(1.5),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   backdropFilter: 'blur(5px)',
-  boxShadow: `0 4px 12px ${alpha(color, 0.2)}`,
+  boxShadow: `0 4px 12px ${alpha(colorValue, 0.2)}`,
 }));
 
 const StatCard = ({ 
@@ -44,25 +44,48 @@ const StatCard = ({
   loading = false,
   onClick
 }) => {
+  const theme = useTheme();
+  
+  // Funkcja pomocnicza do pobierania rzeczywistej wartości koloru z theme
+  const getColorValue = (colorString) => {
+    if (!colorString || typeof colorString !== 'string') return theme.palette.primary.main;
+    
+    // Jeśli to już jest wartość hex, rgb, itp. - zwróć ją bezpośrednio
+    if (colorString.startsWith('#') || colorString.startsWith('rgb') || colorString.startsWith('hsl')) {
+      return colorString;
+    }
+    
+    // W przeciwnym razie spróbuj pobrać kolor z theme
+    const parts = colorString.split('.');
+    if (parts.length === 2 && theme.palette[parts[0]] && theme.palette[parts[0]][parts[1]]) {
+      return theme.palette[parts[0]][parts[1]];
+    }
+    
+    // Fallback do koloru primary
+    return theme.palette.primary.main;
+  };
+
   const renderTrendIcon = () => {
     if (trend === 'up') {
-      return <TrendingUpIcon fontSize="small" sx={{ color: 'success.main' }} />;
+      return <TrendingUpIcon fontSize="small" sx={{ color: theme.palette.success.main }} />;
     } else if (trend === 'down') {
-      return <TrendingDownIcon fontSize="small" sx={{ color: 'error.main' }} />;
+      return <TrendingDownIcon fontSize="small" sx={{ color: theme.palette.error.main }} />;
     } else {
-      return <TrendingFlatIcon fontSize="small" sx={{ color: 'text.secondary' }} />;
+      return <TrendingFlatIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />;
     }
   };
 
   const getTrendColor = () => {
     if (trend === 'up') {
-      return 'success.main';
+      return theme.palette.success.main;
     } else if (trend === 'down') {
-      return 'error.main';
+      return theme.palette.error.main;
     } else {
-      return 'text.secondary';
+      return theme.palette.text.secondary;
     }
   };
+
+  const colorValue = getColorValue(color);
 
   return (
     <StyledCard 
@@ -75,15 +98,15 @@ const StatCard = ({
             {title}
           </Typography>
           {icon && (
-            <IconContainer color={color}>
-              {React.cloneElement(icon, { sx: { color: color, fontSize: '1.5rem' } })}
+            <IconContainer colorValue={colorValue}>
+              {React.cloneElement(icon, { sx: { color: colorValue, fontSize: '1.5rem' } })}
             </IconContainer>
           )}
         </Box>
         
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <CircularProgress size={28} sx={{ color: color }} />
+            <CircularProgress size={28} sx={{ color: colorValue }} />
           </Box>
         ) : (
           <Typography 
@@ -92,10 +115,10 @@ const StatCard = ({
             sx={{ 
               fontWeight: 'bold', 
               mb: 1.5,
-              background: `linear-gradient(45deg, ${color}, ${alpha(color, 0.7)})`,
+              background: `linear-gradient(45deg, ${colorValue}, ${alpha(colorValue, 0.7)})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              textShadow: `0 2px 4px ${alpha(color, 0.2)}`
+              textShadow: `0 2px 4px ${alpha(colorValue, 0.2)}`
             }}
           >
             {value}
@@ -124,7 +147,7 @@ const StatCard = ({
             >
               {trendValue > 0 ? '+' : ''}{trendValue}%
             </Typography>
-            <Typography variant="body2" component="span" sx={{ ml: 0.5, color: 'text.secondary' }}>
+            <Typography variant="body2" component="span" sx={{ ml: 0.5, color: theme.palette.text.secondary }}>
               od ostatniego miesiąca
             </Typography>
           </Box>
