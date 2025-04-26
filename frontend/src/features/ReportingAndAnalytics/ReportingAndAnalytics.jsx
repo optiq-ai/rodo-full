@@ -13,11 +13,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Button
+  Button,
+  Dialog,
+  DialogContent
 } from '@mui/material';
 import { LineChart } from '../../components/Chart';
 import DataTable from '../../components/DataTable';
 import DownloadIcon from '@mui/icons-material/Download';
+import ReportConfigurationForm from './components/ReportConfigurationForm';
 
 // Mock data dla wykresów
 const mockIncidentData = {
@@ -150,6 +153,9 @@ const ReportingAndAnalytics = () => {
   const [timeRange, setTimeRange] = useState('year');
   const [reportType, setReportType] = useState('all');
   const [loading, setLoading] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [formMode, setFormMode] = useState('create');
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -164,9 +170,21 @@ const ReportingAndAnalytics = () => {
   };
 
   const handleGenerateReport = () => {
-    // Placeholder dla generowania raportu
-    console.log('Generowanie raportu:', { reportType, timeRange });
-    // W przyszłości integracja z API
+    // Otwieranie formularza tworzenia nowego raportu
+    setSelectedReport(null);
+    setFormMode('create');
+    setOpenForm(true);
+  };
+  
+  const handleReportClick = (report) => {
+    // Otwieranie formularza edycji raportu
+    setSelectedReport(report);
+    setFormMode('edit');
+    setOpenForm(true);
+  };
+  
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   const handleRefresh = () => {
@@ -302,8 +320,24 @@ const ReportingAndAnalytics = () => {
             columns={reportColumns}
             data={filteredReports}
             loading={loading}
+            onRowClick={handleReportClick}
             onRefresh={handleRefresh}
           />
+          
+          {/* Dialog z formularzem konfiguracji raportu */}
+          <Dialog 
+            open={openForm} 
+            onClose={handleCloseForm}
+            fullWidth
+            maxWidth="md"
+          >
+            <DialogContent>
+              <ReportConfigurationForm 
+                reportConfig={selectedReport} 
+                mode={formMode} 
+              />
+            </DialogContent>
+          </Dialog>
         </Box>
       )}
       

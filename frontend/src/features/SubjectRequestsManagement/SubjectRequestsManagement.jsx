@@ -9,13 +9,16 @@ import {
   Tab,
   IconButton,
   Tooltip,
-  Chip
+  Chip,
+  Dialog,
+  DialogContent
 } from '@mui/material';
 import DataTable from '../../components/DataTable';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
+import SubjectRequestForm from './components/SubjectRequestForm';
 
 // Mock data dla wniosków podmiotów danych
 const mockRequests = [
@@ -181,21 +184,30 @@ const SubjectRequestsManagement = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [formMode, setFormMode] = useState('create');
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const handleRequestClick = (request) => {
-    // Placeholder dla przejścia do szczegółów wniosku
-    console.log('Kliknięto wniosek:', request);
-    // navigate(`/subject-requests/${request.id}`);
+    // Otwieranie formularza edycji wniosku
+    setSelectedRequest(request);
+    setFormMode('edit');
+    setOpenForm(true);
   };
 
   const handleAddRequest = () => {
-    // Placeholder dla dodawania nowego wniosku
-    console.log('Dodawanie nowego wniosku');
-    // navigate('/subject-requests/new');
+    // Otwieranie formularza tworzenia nowego wniosku
+    setSelectedRequest(null);
+    setFormMode('create');
+    setOpenForm(true);
+  };
+  
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   const handleRefresh = () => {
@@ -269,6 +281,21 @@ const SubjectRequestsManagement = () => {
           </>
         }
       />
+      
+      {/* Dialog z formularzem wniosku podmiotu danych */}
+      <Dialog 
+        open={openForm} 
+        onClose={handleCloseForm}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogContent>
+          <SubjectRequestForm 
+            request={selectedRequest} 
+            mode={formMode} 
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

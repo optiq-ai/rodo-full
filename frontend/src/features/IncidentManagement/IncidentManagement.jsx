@@ -9,13 +9,16 @@ import {
   Tab,
   IconButton,
   Tooltip,
-  Chip
+  Chip,
+  Dialog,
+  DialogContent
 } from '@mui/material';
 import DataTable from '../../components/DataTable';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
+import IncidentForm from './components/IncidentForm';
 
 // Mock data dla incydentów
 const mockIncidents = [
@@ -159,21 +162,30 @@ const IncidentManagement = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState(null);
+  const [formMode, setFormMode] = useState('create');
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const handleIncidentClick = (incident) => {
-    // Placeholder dla przejścia do szczegółów incydentu
-    console.log('Kliknięto incydent:', incident);
-    // navigate(`/incidents/${incident.id}`);
+    // Otwieranie formularza edycji incydentu
+    setSelectedIncident(incident);
+    setFormMode('edit');
+    setOpenForm(true);
   };
 
   const handleAddIncident = () => {
-    // Placeholder dla dodawania nowego incydentu
-    console.log('Dodawanie nowego incydentu');
-    // navigate('/incidents/new');
+    // Otwieranie formularza tworzenia nowego incydentu
+    setSelectedIncident(null);
+    setFormMode('create');
+    setOpenForm(true);
+  };
+  
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   const handleRefresh = () => {
@@ -247,6 +259,21 @@ const IncidentManagement = () => {
           </>
         }
       />
+      
+      {/* Dialog z formularzem incydentu */}
+      <Dialog 
+        open={openForm} 
+        onClose={handleCloseForm}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogContent>
+          <IncidentForm 
+            incident={selectedIncident} 
+            mode={formMode} 
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

@@ -8,13 +8,16 @@ import {
   Tabs,
   Tab,
   IconButton,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogContent
 } from '@mui/material';
 import DataTable from '../../components/DataTable';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
+import DocumentForm from './components/DocumentForm';
 
 // Mock data dla dokumentów
 const mockDocuments = [
@@ -120,21 +123,30 @@ const DocumentManagement = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [formMode, setFormMode] = useState('create');
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const handleDocumentClick = (document) => {
-    // Placeholder dla przejścia do szczegółów dokumentu
-    console.log('Kliknięto dokument:', document);
-    // navigate(`/documents/${document.id}`);
+    // Otwieranie formularza edycji dokumentu
+    setSelectedDocument(document);
+    setFormMode('edit');
+    setOpenForm(true);
   };
 
   const handleAddDocument = () => {
-    // Placeholder dla dodawania nowego dokumentu
-    console.log('Dodawanie nowego dokumentu');
-    // navigate('/documents/new');
+    // Otwieranie formularza tworzenia nowego dokumentu
+    setSelectedDocument(null);
+    setFormMode('create');
+    setOpenForm(true);
+  };
+  
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   const handleRefresh = () => {
@@ -208,6 +220,21 @@ const DocumentManagement = () => {
           </>
         }
       />
+
+      {/* Dialog z formularzem dokumentu */}
+      <Dialog 
+        open={openForm} 
+        onClose={handleCloseForm}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogContent>
+          <DocumentForm 
+            document={selectedDocument} 
+            mode={formMode} 
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
