@@ -27,12 +27,12 @@ Frontend aplikacji został zbudowany w React z wykorzystaniem nowoczesnych bibli
 Projekt jest skonfigurowany do pracy w środowisku Docker z wykorzystaniem:
 - Kontenera z frontendem React
 - Kontenera z bazą danych PostgreSQL (do przyszłej integracji z backendem)
-- Portainer do zarządzania kontenerami
 
 ## Struktura projektu
 
 ```
-rodo-app/
+rodo-full/
+├── docker-compose.yml         # Konfiguracja Docker Compose
 ├── docs/                      # Dokumentacja projektu
 │   ├── architecture.md        # Architektura aplikacji
 │   ├── modules.md             # Opis modułów funkcjonalnych
@@ -52,13 +52,12 @@ rodo-app/
 │   │   ├── utils/             # Narzędzia pomocnicze
 │   │   ├── App.js             # Główny komponent aplikacji
 │   │   └── index.js           # Punkt wejściowy
+│   ├── db/                    # Pliki bazy danych
+│   │   └── init.sql           # Skrypt inicjalizujący bazę danych
 │   ├── .eslintrc.js           # Konfiguracja ESLint
 │   ├── .prettierrc            # Konfiguracja Prettier
 │   ├── package.json           # Zależności npm
-│   └── Dockerfile             # Konfiguracja kontenera
-├── docker/                    # Pliki konfiguracyjne dla Docker
-│   ├── docker-compose.yml     # Konfiguracja Docker Compose
-│   └── portainer/             # Konfiguracja Portainer
+│   └── Dockerfile             # Konfiguracja kontenera dla frontendu
 ├── scripts/                   # Skrypty pomocnicze
 │   ├── start-local.sh         # Uruchamianie środowiska lokalnego
 │   ├── run-tests.sh           # Uruchamianie testów
@@ -89,16 +88,15 @@ Szczegółowy opis każdego modułu znajduje się w pliku [docs/modules.md](docs
 
 ### Wymagania wstępne
 
-- Node.js (v16+)
 - Docker i Docker Compose
 - Git
 
-### Uruchomienie lokalne
+### Uruchomienie z Docker Compose (zalecane)
 
 1. Sklonuj repozytorium:
    ```bash
    git clone <adres-repozytorium>
-   cd rodo-app
+   cd rodo-full
    ```
 
 2. Skopiuj plik `.env.example` do `.env` i dostosuj zmienne środowiskowe:
@@ -113,7 +111,7 @@ Szczegółowy opis każdego modułu znajduje się w pliku [docs/modules.md](docs
 
 4. Aplikacja będzie dostępna pod adresem: http://localhost:3000
 
-### Uruchomienie bez Dockera
+### Uruchomienie bez Dockera (tylko frontend)
 
 1. Przejdź do katalogu frontend:
    ```bash
