@@ -1,16 +1,9 @@
 // src/components/ProtectedRoute/ProtectedRoute.jsx
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+// Usunięto import Navigate i useLocation, ponieważ nie są już potrzebne
 
 const ProtectedRoute = ({ children }) => {
-  const location = useLocation();
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-
-  if (!isAuthenticated) {
-    // Przekierowanie do strony logowania z zapisaniem oryginalnej ścieżki
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
+  // Usunięto logikę autoryzacji - komponent zawsze renderuje dzieci
   return children;
 };
 
