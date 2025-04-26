@@ -103,6 +103,25 @@ const DataTable = ({
     }
   };
 
+  // Funkcja pomocnicza do pobierania rzeczywistej wartości koloru z theme
+  const getColorValue = (colorString) => {
+    if (!colorString || typeof colorString !== 'string') return theme.palette.text.secondary;
+    
+    // Jeśli to już jest wartość hex, rgb, itp. - zwróć ją bezpośrednio
+    if (colorString.startsWith('#') || colorString.startsWith('rgb') || colorString.startsWith('hsl')) {
+      return colorString;
+    }
+    
+    // W przeciwnym razie spróbuj pobrać kolor z theme
+    const parts = colorString.split('.');
+    if (parts.length === 2 && theme.palette[parts[0]] && theme.palette[parts[0]][parts[1]]) {
+      return theme.palette[parts[0]][parts[1]];
+    }
+    
+    // Fallback do koloru text.secondary
+    return theme.palette.text.secondary;
+  };
+
   // Filtrowanie danych na podstawie wyszukiwania
   const filteredData = data.filter((row) => {
     if (!searchTerm) return true;
@@ -135,20 +154,23 @@ const DataTable = ({
 
     if (column.type === 'status') {
       let color = 'default';
-      let bgColor = alpha(theme.palette.text.secondary, 0.1);
+      let colorPath = 'text.secondary';
       
       if (value === 'active' || value === 'completed' || value === 'success') {
         color = 'success';
-        bgColor = alpha(theme.palette.success.main, 0.1);
+        colorPath = 'success.main';
       }
       if (value === 'pending' || value === 'in_progress') {
         color = 'warning';
-        bgColor = alpha(theme.palette.warning.main, 0.1);
+        colorPath = 'warning.main';
       }
       if (value === 'inactive' || value === 'failed' || value === 'error') {
         color = 'error';
-        bgColor = alpha(theme.palette.error.main, 0.1);
+        colorPath = 'error.main';
       }
+      
+      // Pobierz rzeczywistą wartość koloru za pomocą funkcji pomocniczej
+      const colorValue = getColorValue(colorPath);
       
       return (
         <Chip 
@@ -157,10 +179,10 @@ const DataTable = ({
           color={color}
           sx={{ 
             textTransform: 'capitalize',
-            backgroundColor: bgColor,
+            backgroundColor: alpha(colorValue, 0.1),
             backdropFilter: 'blur(8px)',
             fontWeight: 500,
-            boxShadow: `0 2px 6px ${alpha(theme.palette[color].main, 0.2)}`
+            boxShadow: `0 2px 6px ${alpha(colorValue, 0.2)}`
           }}
         />
       );
