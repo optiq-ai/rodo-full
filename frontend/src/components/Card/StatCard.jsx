@@ -1,6 +1,6 @@
 // src/components/Card/StatCard.jsx
 import React from 'react';
-import { Card, CardContent, Typography, Box, CircularProgress } from '@mui/material';
+import { Card, CardContent, Typography, Box, CircularProgress, alpha } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -11,12 +11,27 @@ const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   borderRadius: theme.shape.borderRadius,
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  background: alpha(theme.palette.background.paper, 0.7),
+  backdropFilter: 'blur(10px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
   transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
   '&:hover': {
     transform: 'translateY(-4px)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
   },
+}));
+
+const IconContainer = styled(Box)(({ theme, color }) => ({
+  backgroundColor: alpha(color, 0.15),
+  borderRadius: '12px',
+  padding: theme.spacing(1.5),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backdropFilter: 'blur(5px)',
+  boxShadow: `0 4px 12px ${alpha(color, 0.2)}`,
 }));
 
 const StatCard = ({ 
@@ -54,39 +69,49 @@ const StatCard = ({
       onClick={onClick} 
       sx={{ cursor: onClick ? 'pointer' : 'default' }}
     >
-      <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Typography variant="h6" component="div" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+      <CardContent sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+          <Typography variant="h6" component="div" color="text.secondary" sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
             {title}
           </Typography>
           {icon && (
-            <Box 
-              sx={{ 
-                backgroundColor: `${color}15`, 
-                borderRadius: '50%', 
-                p: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              {React.cloneElement(icon, { sx: { color: color } })}
-            </Box>
+            <IconContainer color={color}>
+              {React.cloneElement(icon, { sx: { color: color, fontSize: '1.5rem' } })}
+            </IconContainer>
           )}
         </Box>
         
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <CircularProgress size={24} />
+            <CircularProgress size={28} sx={{ color: color }} />
           </Box>
         ) : (
-          <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+          <Typography 
+            variant="h4" 
+            component="div" 
+            sx={{ 
+              fontWeight: 'bold', 
+              mb: 1.5,
+              background: `linear-gradient(45deg, ${color}, ${alpha(color, 0.7)})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: `0 2px 4px ${alpha(color, 0.2)}`
+            }}
+          >
             {value}
           </Typography>
         )}
         
         {!loading && trendValue !== 0 && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 1, 
+              borderRadius: 1,
+              background: alpha(getTrendColor(), 0.05),
+            }}
+          >
             {renderTrendIcon()}
             <Typography 
               variant="body2" 

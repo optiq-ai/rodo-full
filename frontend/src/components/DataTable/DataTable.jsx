@@ -21,7 +21,9 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Divider
+  Divider,
+  alpha,
+  useTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -68,6 +70,7 @@ const DataTable = ({
   onRefresh,
   actions
 }) => {
+  const theme = useTheme();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -132,16 +135,33 @@ const DataTable = ({
 
     if (column.type === 'status') {
       let color = 'default';
-      if (value === 'active' || value === 'completed' || value === 'success') color = 'success';
-      if (value === 'pending' || value === 'in_progress') color = 'warning';
-      if (value === 'inactive' || value === 'failed' || value === 'error') color = 'error';
+      let bgColor = alpha(theme.palette.text.secondary, 0.1);
+      
+      if (value === 'active' || value === 'completed' || value === 'success') {
+        color = 'success';
+        bgColor = alpha(theme.palette.success.main, 0.1);
+      }
+      if (value === 'pending' || value === 'in_progress') {
+        color = 'warning';
+        bgColor = alpha(theme.palette.warning.main, 0.1);
+      }
+      if (value === 'inactive' || value === 'failed' || value === 'error') {
+        color = 'error';
+        bgColor = alpha(theme.palette.error.main, 0.1);
+      }
       
       return (
         <Chip 
           label={value} 
           size="small" 
           color={color}
-          sx={{ textTransform: 'capitalize' }}
+          sx={{ 
+            textTransform: 'capitalize',
+            backgroundColor: bgColor,
+            backdropFilter: 'blur(8px)',
+            fontWeight: 500,
+            boxShadow: `0 2px 6px ${alpha(theme.palette[color].main, 0.2)}`
+          }}
         />
       );
     }
@@ -162,7 +182,14 @@ const DataTable = ({
   };
 
   return (
-    <Card>
+    <Card sx={{ 
+      background: alpha(theme.palette.background.paper, 0.7),
+      backdropFilter: 'blur(10px)',
+      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+      border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+      borderRadius: theme.shape.borderRadius,
+      overflow: 'hidden'
+    }}>
       {title && (
         <>
           <CardHeader
@@ -175,38 +202,61 @@ const DataTable = ({
                 {actions}
                 {onRefresh && (
                   <Tooltip title="Odśwież">
-                    <IconButton onClick={handleRefresh} disabled={loading}>
+                    <IconButton onClick={handleRefresh} disabled={loading} sx={{
+                      color: theme.palette.primary.main,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                      }
+                    }}>
                       <RefreshIcon />
                     </IconButton>
                   </Tooltip>
                 )}
               </Box>
             }
+            sx={{ px: 3, py: 2 }}
           />
-          <Divider />
+          <Divider sx={{ opacity: 0.1 }} />
         </>
       )}
       <CardContent sx={{ p: 0 }}>
         {filtering && (
-          <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ px: 3, py: 2, display: 'flex', alignItems: 'center' }}>
             <TextField
               variant="outlined"
               size="small"
               placeholder="Szukaj..."
               value={searchTerm}
               onChange={handleSearch}
-              sx={{ minWidth: 300 }}
+              sx={{ 
+                minWidth: 300,
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: alpha(theme.palette.background.default, 0.5),
+                  backdropFilter: 'blur(8px)',
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: alpha(theme.palette.primary.main, 0.3)
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.palette.primary.main
+                  }
+                }
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon color="action" />
                   </InputAdornment>
                 ),
               }}
             />
             <Box sx={{ ml: 'auto' }}>
               <Tooltip title="Filtry">
-                <IconButton>
+                <IconButton sx={{
+                  color: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                  }
+                }}>
                   <FilterListIcon />
                 </IconButton>
               </Tooltip>
@@ -214,7 +264,10 @@ const DataTable = ({
           </Box>
         )}
 
-        <TableContainer component={Paper} elevation={0}>
+        <TableContainer component={Paper} elevation={0} sx={{ 
+          backgroundColor: 'transparent',
+          backgroundImage: 'none'
+        }}>
           <Table size="medium">
             <TableHead>
               <TableRow>
@@ -227,7 +280,12 @@ const DataTable = ({
                     sx={{ 
                       fontWeight: 'bold',
                       whiteSpace: 'nowrap',
-                      width: column.width || 'auto'
+                      width: column.width || 'auto',
+                      color: theme.palette.text.primary,
+                      borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                      backgroundColor: alpha(theme.palette.background.default, 0.3),
+                      backdropFilter: 'blur(4px)',
+                      padding: '16px 24px'
                     }}
                   >
                     {sorting && column.sortable !== false ? (
@@ -235,6 +293,11 @@ const DataTable = ({
                         active={orderBy === column.id}
                         direction={orderBy === column.id ? order : 'asc'}
                         onClick={() => handleRequestSort(column.id)}
+                        sx={{
+                          '& .MuiTableSortLabel-icon': {
+                            color: `${alpha(theme.palette.primary.main, 0.5)} !important`
+                          }
+                        }}
                       >
                         {column.label}
                       </TableSortLabel>
@@ -249,7 +312,7 @@ const DataTable = ({
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center" sx={{ py: 5 }}>
-                    <CircularProgress size={40} />
+                    <CircularProgress size={40} sx={{ color: theme.palette.primary.main }} />
                     <Typography variant="body2" sx={{ mt: 2 }}>
                       Ładowanie danych...
                     </Typography>
@@ -277,7 +340,14 @@ const DataTable = ({
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
                       sx={{ 
                         cursor: onRowClick ? 'pointer' : 'default',
-                        '&:last-child td, &:last-child th': { border: 0 }
+                        '&:last-child td, &:last-child th': { border: 0 },
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                        },
+                        '& td': {
+                          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.05)}`,
+                          padding: '16px 24px'
+                        }
                       }}
                     >
                       {columns.map((column) => (
@@ -312,6 +382,19 @@ const DataTable = ({
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage="Wierszy na stronie:"
             labelDisplayedRows={({ from, to, count }) => `${from}-${to} z ${count}`}
+            sx={{
+              borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+              color: theme.palette.text.secondary,
+              '& .MuiToolbar-root': {
+                padding: '16px 24px'
+              },
+              '& .MuiTablePagination-select': {
+                backgroundColor: alpha(theme.palette.background.default, 0.5),
+                backdropFilter: 'blur(8px)',
+                borderRadius: 1,
+                padding: '4px 8px'
+              }
+            }}
           />
         )}
       </CardContent>
