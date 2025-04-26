@@ -3,46 +3,46 @@ import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#6a98e8', // Pastelowy niebieski
-      light: '#9cc3ff',
-      dark: '#3d6cb5',
+      main: '#3f6ad8', // Niebieski
+      light: '#6b8fe9',
+      dark: '#2a4cad',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#7cb083', // Pastelowy zielony
-      light: '#a1e5b0',
-      dark: '#4d8258',
+      main: '#4caf50', // Zielony
+      light: '#80e27e',
+      dark: '#087f23',
       contrastText: '#ffffff',
     },
     error: {
-      main: '#f06292', // Pastelowy czerwony
+      main: '#f44336', // Czerwony
     },
     warning: {
-      main: '#ffb74d', // Pastelowy pomarańczowy
+      main: '#ff9800', // Pomarańczowy
     },
     info: {
-      main: '#64b5f6', // Pastelowy niebieski
+      main: '#2196f3', // Niebieski
     },
     success: {
-      main: '#81c784', // Pastelowy zielony
+      main: '#4caf50', // Zielony
     },
     background: {
-      default: '#1a1f2b', // Ciemne tło
-      paper: '#232a3b',   // Ciemne tło dla kart
+      default: '#f5f7fa', // Jasne tło
+      paper: '#ffffff',   // Białe tło dla kart
     },
     text: {
-      primary: '#e0e0e0',
-      secondary: '#b0b0b0',
+      primary: '#333333',
+      secondary: '#666666',
     },
-    divider: 'rgba(255, 255, 255, 0.12)',
+    divider: 'rgba(0, 0, 0, 0.12)',
     action: {
-      active: 'rgba(255, 255, 255, 0.7)',
-      hover: 'rgba(255, 255, 255, 0.08)',
-      selected: 'rgba(255, 255, 255, 0.16)',
-      disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)',
+      active: 'rgba(0, 0, 0, 0.54)',
+      hover: 'rgba(0, 0, 0, 0.04)',
+      selected: 'rgba(0, 0, 0, 0.08)',
+      disabled: 'rgba(0, 0, 0, 0.26)',
+      disabledBackground: 'rgba(0, 0, 0, 0.12)',
     }
   },
   typography: {
@@ -82,13 +82,13 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 12, // Zwiększony promień zaokrąglenia
+    borderRadius: 0, // Usunięcie zaokrągleń
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: '8px',
+          borderRadius: '0',
           padding: '8px 16px',
         },
       },
@@ -96,10 +96,10 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: '12px',
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-          background: 'rgba(35, 42, 59, 0.8)', // Glassmorphism effect
-          backdropFilter: 'blur(10px)',
+          borderRadius: '0',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          background: '#ffffff',
+          border: '1px solid rgba(0, 0, 0, 0.08)',
         },
       },
     },
@@ -107,6 +107,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          borderRadius: '0',
         },
       },
     },
@@ -114,23 +115,26 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           marginBottom: '16px',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '0',
+          }
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: 'rgba(26, 31, 43, 0.8)', // Glassmorphism effect
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          background: '#ffffff',
+          boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+          color: '#333333',
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          background: '#1a1f2b',
-          borderRight: '1px solid rgba(255, 255, 255, 0.05)',
+          background: '#ffffff',
+          borderRight: '1px solid rgba(0, 0, 0, 0.08)',
         },
       },
     },
@@ -138,11 +142,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            backgroundColor: 'rgba(106, 152, 232, 0.15)',
-            borderLeft: '4px solid #6a98e8',
+            backgroundColor: 'rgba(63, 106, 216, 0.08)',
+            borderLeft: '4px solid #3f6ad8',
           },
           '&:hover': {
-            backgroundColor: 'rgba(106, 152, 232, 0.08)',
+            backgroundColor: 'rgba(63, 106, 216, 0.04)',
           },
         },
       },
@@ -150,17 +154,46 @@ const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
         },
         head: {
           fontWeight: 600,
+          backgroundColor: '#f5f7fa',
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: '6px',
+          borderRadius: '0',
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '0',
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '0',
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          borderRadius: '0',
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '0',
         },
       },
     },
