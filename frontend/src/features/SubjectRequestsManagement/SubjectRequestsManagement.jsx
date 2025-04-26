@@ -17,7 +17,6 @@ import DataTable from '../../components/DataTable';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useNavigate } from 'react-router-dom';
 import SubjectRequestForm from './components/SubjectRequestForm';
 
 // Mock data dla wniosków podmiotów danych
@@ -181,7 +180,6 @@ const requestColumns = [
 ];
 
 const SubjectRequestsManagement = () => {
-  const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [openForm, setOpenForm] = useState(false);

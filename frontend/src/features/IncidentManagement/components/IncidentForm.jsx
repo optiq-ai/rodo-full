@@ -262,7 +262,11 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
     {
       label: 'Działania naprawcze',
       description: 'Opisz podjęte działania naprawcze i zapobiegawcze',
-      icon: <BuildIcon   return (
+      icon: <BuildIcon />
+    }
+  ];
+
+  return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={pl}>
       <Paper 
         elevation={3} 
