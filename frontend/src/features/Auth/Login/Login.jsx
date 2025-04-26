@@ -1,5 +1,5 @@
 // src/features/Auth/Login/Login.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   TextField, 
@@ -11,10 +11,11 @@ import {
   CircularProgress
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -22,6 +23,26 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Automatyczne logowanie w środowisku deweloperskim
+  useEffect(() => {
+    // Sprawdź, czy użytkownik jest już zalogowany
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from);
+    } else {
+      // Automatyczne logowanie w trybie deweloperskim
+      if (process.env.NODE_ENV === 'development') {
+        localStorage.setItem('accessToken', 'mock-token');
+        localStorage.setItem('refreshToken', 'mock-refresh-token');
+        localStorage.setItem('isAuthenticated', 'true');
+        
+        // Przekierowanie do dashboardu
+        const from = location.state?.from?.pathname || '/';
+        navigate(from);
+      }
+    }
+  }, [navigate, location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +80,8 @@ const Login = () => {
         localStorage.setItem('isAuthenticated', 'true');
         
         // Przekierowanie do dashboardu
-        navigate('/');
+        const from = location.state?.from?.pathname || '/';
+        navigate(from);
       } else {
         setError('Nieprawidłowy email lub hasło');
       }
