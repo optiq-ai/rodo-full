@@ -2,10 +2,10 @@ version: '3.8'
 services:
   frontend:
     build: 
-      context: ../frontend
-      dockerfile: ../docker/frontend/Dockerfile
+      context: ./frontend
+      dockerfile: ./docker/frontend/Dockerfile
     volumes:
-      - ../frontend:/app
+      - ./frontend:/app
       - /app/node_modules
     ports:
       - "3000:3000"
@@ -19,7 +19,7 @@ services:
     image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
