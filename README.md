@@ -26,7 +26,6 @@ Frontend aplikacji został zbudowany w React z wykorzystaniem nowoczesnych bibli
 
 Projekt jest skonfigurowany do pracy w środowisku Docker z wykorzystaniem:
 - Kontenera z frontendem React
-- Kontenera z bazą danych PostgreSQL (do przyszłej integracji z backendem)
 
 ## Struktura projektu
 
@@ -52,8 +51,6 @@ rodo-full/
 │   │   ├── utils/             # Narzędzia pomocnicze
 │   │   ├── App.js             # Główny komponent aplikacji
 │   │   └── index.js           # Punkt wejściowy
-│   ├── db/                    # Pliki bazy danych
-│   │   └── init.sql           # Skrypt inicjalizujący bazę danych
 │   ├── .eslintrc.js           # Konfiguracja ESLint
 │   ├── .prettierrc            # Konfiguracja Prettier
 │   ├── package.json           # Zależności npm
