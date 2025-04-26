@@ -506,7 +506,7 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                       </FormControl>
                     </Grid>
                     
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                       <FormControl 
                         fullWidth
                         sx={{ 
@@ -537,17 +537,11 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                       </FormControl>
                     </Grid>
                     
-                    <Grid item xs={12} sm={6}>
-                      <TextField
+                    <Grid item xs={12}>
+                      <FormControl 
                         fullWidth
-                        label="Przypisany do"
-                        name="assignedTo"
-                        value={formData.assignedTo}
-                        onChange={handleChange}
-                        disabled={loading}
-                        placeholder="Imię i nazwisko osoby odpowiedzialnej"
-                        InputProps={{
-                          sx: { 
+                        sx={{ 
+                          '& .MuiOutlinedInput-root': {
                             backgroundColor: 'white',
                             '&:hover': {
                               boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.2)}`
@@ -557,7 +551,23 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                             }
                           }
                         }}
-                      />
+                      >
+                        <InputLabel>Przypisany do</InputLabel>
+                        <Select
+                          name="assignedTo"
+                          value={formData.assignedTo}
+                          onChange={handleChange}
+                          label="Przypisany do"
+                          disabled={loading}
+                        >
+                          <MenuItem value="">
+                            <em>Nie przypisano</em>
+                          </MenuItem>
+                          <MenuItem value="user1">Jan Kowalski</MenuItem>
+                          <MenuItem value="user2">Anna Nowak</MenuItem>
+                          <MenuItem value="user3">Piotr Wiśniewski</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -591,18 +601,20 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
                       <DateTimePicker
-                        label="Data incydentu"
+                        label="Data i czas incydentu"
                         value={formData.incidentDate}
                         onChange={(date) => handleDateChange('incidentDate', date)}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            required: true,
-                            error: !!errors.incidentDate,
-                            helperText: errors.incidentDate,
-                            disabled: loading,
-                            sx: {
-                              '& .MuiOutlinedInput-root': {
+                        renderInput={(params) => (
+                          <TextField 
+                            {...params} 
+                            fullWidth 
+                            required
+                            error={!!errors.incidentDate}
+                            helperText={errors.incidentDate}
+                            disabled={loading}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: { 
                                 backgroundColor: 'white',
                                 '&:hover': {
                                   boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.2)}`
@@ -611,26 +623,28 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                                   boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.3)}`
                                 }
                               }
-                            }
-                          }
-                        }}
+                            }}
+                          />
+                        )}
                       />
                     </Grid>
                     
                     <Grid item xs={12} sm={6}>
                       <DateTimePicker
-                        label="Data wykrycia"
+                        label="Data i czas wykrycia"
                         value={formData.detectionDate}
                         onChange={(date) => handleDateChange('detectionDate', date)}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            required: true,
-                            error: !!errors.detectionDate,
-                            helperText: errors.detectionDate,
-                            disabled: loading,
-                            sx: {
-                              '& .MuiOutlinedInput-root': {
+                        renderInput={(params) => (
+                          <TextField 
+                            {...params} 
+                            fullWidth 
+                            required
+                            error={!!errors.detectionDate}
+                            helperText={errors.detectionDate}
+                            disabled={loading}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: { 
                                 backgroundColor: 'white',
                                 '&:hover': {
                                   boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.2)}`
@@ -639,9 +653,9 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                                   boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.3)}`
                                 }
                               }
-                            }
-                          }
-                        }}
+                            }}
+                          />
+                        )}
                       />
                     </Grid>
                   </Grid>
@@ -677,14 +691,14 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Opis incydentu"
+                        multiline
+                        rows={6}
+                        label="Szczegółowy opis incydentu"
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        multiline
-                        rows={6}
                         error={!!errors.description}
-                        helperText={errors.description}
+                        helperText={errors.description || "Opisz dokładnie co się wydarzyło, jakie systemy zostały dotknięte, jakie dane zostały naruszone itp."}
                         disabled={loading}
                         required
                         InputProps={{
@@ -700,6 +714,70 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                         }}
                       />
                     </Grid>
+                    
+                    <Grid item xs={12}>
+                      <Box 
+                        sx={{ 
+                          p: 3, 
+                          border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
+                          borderRadius: 1,
+                          backgroundColor: alpha(theme.palette.primary.main, 0.02),
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                            borderColor: alpha(theme.palette.primary.main, 0.5)
+                          }
+                        }}
+                      >
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleFileChange}
+                          style={{ display: 'none' }}
+                          id="incident-file-upload"
+                          disabled={loading}
+                        />
+                        <label htmlFor="incident-file-upload">
+                          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <DescriptionIcon sx={{ fontSize: 40, color: theme.palette.primary.main, mb: 1 }} />
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
+                              Przeciągnij i upuść pliki lub kliknij, aby dodać załączniki
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              Możesz dodać zrzuty ekranu, logi, raporty lub inne dokumenty związane z incydentem
+                            </Typography>
+                          </Box>
+                        </label>
+                      </Box>
+                    </Grid>
+                    
+                    {formData.attachments.length > 0 && (
+                      <Grid item xs={12}>
+                        <Box sx={{ mt: 2 }}>
+                          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                            Wybrane pliki:
+                          </Typography>
+                          <ul>
+                            {formData.attachments.map((file, index) => (
+                              <li key={index} style={{ marginBottom: '8px' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                  <Typography variant="body2">{file.name}</Typography>
+                                  <Button 
+                                    size="small" 
+                                    color="error" 
+                                    onClick={() => handleRemoveAttachment(index)}
+                                    disabled={loading}
+                                  >
+                                    Usuń
+                                  </Button>
+                                </Box>
+                              </li>
+                            ))}
+                          </ul>
+                        </Box>
+                      </Grid>
+                    )}
                   </Grid>
                 </CardContent>
               </Card>
@@ -719,7 +797,7 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                   title={
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <SecurityIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
-                      <Typography variant="h6">Naruszenie ochrony danych osobowych</Typography>
+                      <Typography variant="h6">Naruszenie danych osobowych</Typography>
                     </Box>
                   }
                   subheader="Określ czy incydent stanowi naruszenie ochrony danych osobowych"
@@ -734,9 +812,9 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                       <FormControlLabel
                         control={
                           <Checkbox
-                            name="dataBreachOccurred"
                             checked={formData.dataBreachOccurred}
                             onChange={handleChange}
+                            name="dataBreachOccurred"
                             disabled={loading}
                             sx={{
                               color: theme.palette.primary.main,
@@ -759,16 +837,16 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
+                            multiline
+                            rows={3}
                             label="Osoby, których dane dotyczą"
                             name="affectedPersons"
                             value={formData.affectedPersons}
                             onChange={handleChange}
-                            multiline
-                            rows={3}
                             error={!!errors.affectedPersons}
                             helperText={errors.affectedPersons || "Opisz kategorie i przybliżoną liczbę osób, których dane dotyczą"}
                             disabled={loading}
-                            required={formData.dataBreachOccurred}
+                            required
                             InputProps={{
                               sx: { 
                                 backgroundColor: 'white',
@@ -786,16 +864,16 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
-                            label="Naruszone dane"
+                            multiline
+                            rows={3}
+                            label="Kategorie danych osobowych"
                             name="affectedData"
                             value={formData.affectedData}
                             onChange={handleChange}
-                            multiline
-                            rows={3}
                             error={!!errors.affectedData}
                             helperText={errors.affectedData || "Opisz kategorie i przybliżoną liczbę wpisów danych osobowych, których dotyczy naruszenie"}
                             disabled={loading}
-                            required={formData.dataBreachOccurred}
+                            required
                             InputProps={{
                               sx: { 
                                 backgroundColor: 'white',
@@ -811,127 +889,43 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                         </Grid>
                         
                         <Grid item xs={12} sm={6}>
-                          <FormControl 
-                            component="fieldset"
-                            sx={{
-                              p: 2,
-                              border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                              borderRadius: 1,
-                              backgroundColor: 'white'
-                            }}
-                          >
-                            <FormLabel 
-                              component="legend"
-                              sx={{
-                                color: theme.palette.primary.main,
-                                fontWeight: 500
-                              }}
-                            >
-                              Zgłoszenie do PUODO
-                            </FormLabel>
-                            <RadioGroup
-                              name="reportedToPuodo"
-                              value={formData.reportedToPuodo.toString()}
-                              onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                reportedToPuodo: e.target.value === 'true'
-                              }))}
-                              row
-                            >
-                              <FormControlLabel 
-                                value="true" 
-                                control={
-                                  <Radio 
-                                    disabled={loading} 
-                                    sx={{
-                                      color: theme.palette.primary.main,
-                                      '&.Mui-checked': {
-                                        color: theme.palette.primary.main,
-                                      },
-                                    }}
-                                  />
-                                } 
-                                label="Tak" 
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formData.reportedToPuodo}
+                                onChange={handleChange}
+                                name="reportedToPuodo"
+                                disabled={loading}
+                                sx={{
+                                  color: theme.palette.primary.main,
+                                  '&.Mui-checked': {
+                                    color: theme.palette.primary.main,
+                                  },
+                                }}
                               />
-                              <FormControlLabel 
-                                value="false" 
-                                control={
-                                  <Radio 
-                                    disabled={loading}
-                                    sx={{
-                                      color: theme.palette.primary.main,
-                                      '&.Mui-checked': {
-                                        color: theme.palette.primary.main,
-                                      },
-                                    }}
-                                  />
-                                } 
-                                label="Nie" 
-                              />
-                            </RadioGroup>
-                          </FormControl>
+                            }
+                            label="Zgłoszono do PUODO"
+                          />
                         </Grid>
                         
                         <Grid item xs={12} sm={6}>
-                          <FormControl 
-                            component="fieldset"
-                            sx={{
-                              p: 2,
-                              border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                              borderRadius: 1,
-                              backgroundColor: 'white'
-                            }}
-                          >
-                            <FormLabel 
-                              component="legend"
-                              sx={{
-                                color: theme.palette.primary.main,
-                                fontWeight: 500
-                              }}
-                            >
-                              Zgłoszenie do osób, których dane dotyczą
-                            </FormLabel>
-                            <RadioGroup
-                              name="reportedToDataSubjects"
-                              value={formData.reportedToDataSubjects.toString()}
-                              onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                reportedToDataSubjects: e.target.value === 'true'
-                              }))}
-                              row
-                            >
-                              <FormControlLabel 
-                                value="true" 
-                                control={
-                                  <Radio 
-                                    disabled={loading}
-                                    sx={{
-                                      color: theme.palette.primary.main,
-                                      '&.Mui-checked': {
-                                        color: theme.palette.primary.main,
-                                      },
-                                    }}
-                                  />
-                                } 
-                                label="Tak" 
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formData.reportedToDataSubjects}
+                                onChange={handleChange}
+                                name="reportedToDataSubjects"
+                                disabled={loading}
+                                sx={{
+                                  color: theme.palette.primary.main,
+                                  '&.Mui-checked': {
+                                    color: theme.palette.primary.main,
+                                  },
+                                }}
                               />
-                              <FormControlLabel 
-                                value="false" 
-                                control={
-                                  <Radio 
-                                    disabled={loading}
-                                    sx={{
-                                      color: theme.palette.primary.main,
-                                      '&.Mui-checked': {
-                                        color: theme.palette.primary.main,
-                                      },
-                                    }}
-                                  />
-                                } 
-                                label="Nie" 
-                              />
-                            </RadioGroup>
-                          </FormControl>
+                            }
+                            label="Zawiadomiono osoby, których dane dotyczą"
+                          />
                         </Grid>
                       </>
                     )}
@@ -954,7 +948,7 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                   title={
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <BuildIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
-                      <Typography variant="h6">Działania naprawcze i zapobiegawcze</Typography>
+                      <Typography variant="h6">Działania naprawcze</Typography>
                     </Box>
                   }
                   subheader="Opisz podjęte działania naprawcze i zapobiegawcze"
@@ -968,14 +962,14 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
+                        multiline
+                        rows={4}
                         label="Podjęte działania naprawcze"
                         name="correctiveActions"
                         value={formData.correctiveActions}
                         onChange={handleChange}
-                        multiline
-                        rows={4}
                         disabled={loading}
-                        placeholder="Opisz działania podjęte w celu usunięcia skutków incydentu"
+                        placeholder="Opisz jakie działania zostały podjęte w celu usunięcia skutków incydentu"
                         InputProps={{
                           sx: { 
                             backgroundColor: 'white',
@@ -993,14 +987,14 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Działania zapobiegawcze"
+                        multiline
+                        rows={4}
+                        label="Środki zapobiegawcze"
                         name="preventiveMeasures"
                         value={formData.preventiveMeasures}
                         onChange={handleChange}
-                        multiline
-                        rows={4}
                         disabled={loading}
-                        placeholder="Opisz działania podjęte w celu zapobieżenia podobnym incydentom w przyszłości"
+                        placeholder="Opisz jakie środki zostały lub zostaną wdrożone, aby zapobiec podobnym incydentom w przyszłości"
                         InputProps={{
                           sx: { 
                             backgroundColor: 'white',
@@ -1020,38 +1014,51 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
             )}
           </Box>
           
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              p: 3, 
-              borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-              backgroundColor: alpha(theme.palette.background.default, 0.5)
-            }}
-          >
-            <Button
-              variant="outlined"
-              onClick={activeStep === 0 ? handleCancel : handleBack}
-              disabled={loading}
-              sx={{ 
-                minWidth: 100,
-                background: 'white',
-                '&:hover': {
-                  background: alpha(theme.palette.primary.main, 0.05)
-                }
-              }}
-            >
-              {activeStep === 0 ? 'Anuluj' : 'Wstecz'}
-            </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 3, pb: 3 }}>
+            <Box>
+              <Button
+                variant="outlined"
+                onClick={handleCancel}
+                disabled={loading}
+                sx={{ 
+                  mr: 1,
+                  borderColor: alpha(theme.palette.primary.main, 0.5),
+                  '&:hover': {
+                    borderColor: theme.palette.primary.main,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                  }
+                }}
+              >
+                Anuluj
+              </Button>
+              
+              {activeStep > 0 && (
+                <Button
+                  onClick={handleBack}
+                  disabled={loading}
+                  sx={{ 
+                    borderColor: alpha(theme.palette.primary.main, 0.5),
+                    '&:hover': {
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                    }
+                  }}
+                >
+                  Wstecz
+                </Button>
+              )}
+            </Box>
             
             <Button
               variant="contained"
+              color="primary"
               onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
               disabled={loading}
-              startIcon={loading && activeStep === steps.length - 1 ? <CircularProgress size={20} /> : null}
+              endIcon={loading && <CircularProgress size={20} color="inherit" />}
               sx={{ 
-                minWidth: 120,
-                background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
+                px: 4,
+                py: 1,
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                 boxShadow: `0 4px 10px ${alpha(theme.palette.primary.main, 0.3)}`,
                 '&:hover': {
                   boxShadow: `0 6px 15px ${alpha(theme.palette.primary.main, 0.4)}`
@@ -1064,51 +1071,6 @@ const IncidentForm = ({ incident, mode = 'create' }) => {
               }
             </Button>
           </Box>
-        </Box>
-      </Paper>
-    </LocalizationProvider>
-  );            Wybrane pliki:
-                  </Typography>
-                  <ul>
-                    {formData.attachments.map((file, index) => (
-                      <li key={index}>
-                        {file.name}
-                        <Button
-                          size="small"
-                          onClick={() => handleRemoveAttachment(index)}
-                          sx={{ ml: 1 }}
-                        >
-                          Usuń
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                </Box>
-              )}
-            </Grid>
-            
-            <Grid item xs={12}>
-              <Divider sx={{ my: 2 }} />
-            </Grid>
-            
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button
-                variant="outlined"
-                onClick={handleCancel}
-                disabled={loading}
-              >
-                Anuluj
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} /> : null}
-              >
-                {loading ? 'Zapisywanie...' : mode === 'create' ? 'Utwórz incydent' : 'Zapisz zmiany'}
-              </Button>
-            </Grid>
-          </Grid>
         </Box>
       </Paper>
     </LocalizationProvider>
