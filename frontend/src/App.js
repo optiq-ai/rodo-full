@@ -16,11 +16,11 @@ import IncidentManagement from './features/IncidentManagement';
 import SubjectRequestsManagement from './features/SubjectRequestsManagement';
 import Settings from './features/Settings';
 import ReportingAndAnalytics from './features/ReportingAndAnalytics';
+import RodoRegisters from './features/RodoRegisters';
+import RiskAnalysis from './features/RiskAnalysis';
+import TrainingAndEducation from './features/TrainingAndEducation';
 
 // Placeholdery dla pozostałych modułów
-const RodoRegisters = () => <div>Moduł Rejestrów RODO</div>;
-const RiskAnalysis = () => <div>Moduł Analizy Ryzyka</div>;
-const TrainingAndEducation = () => <div>Moduł Szkoleń i Edukacji</div>;
 const ConsentManagement = () => <div>Moduł Zarządzania Zgodami</div>;
 const DataMapping = () => <div>Moduł Mapowania Danych</div>;
 const VendorRiskManagement = () => <div>Moduł Zarządzania Ryzykiem Dostawców</div>;
