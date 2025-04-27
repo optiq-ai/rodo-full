@@ -19,9 +19,9 @@ import ReportingAndAnalytics from './features/ReportingAndAnalytics';
 import RodoRegisters from './features/RodoRegisters';
 import RiskAnalysis from './features/RiskAnalysis';
 import TrainingAndEducation from './features/TrainingAndEducation';
+import ConsentManagement from './features/ConsentManagement';
 
 // Placeholdery dla pozostałych modułów
-const ConsentManagement = () => <div>Moduł Zarządzania Zgodami</div>;
 const DataMapping = () => <div>Moduł Mapowania Danych</div>;
 const VendorRiskManagement = () => <div>Moduł Zarządzania Ryzykiem Dostawców</div>;
 
