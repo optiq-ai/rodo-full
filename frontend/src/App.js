@@ -1,4 +1,4 @@
-// src/App.js - Aktualizacja importów dla zaimplementowanych modułów
+// src/App.js - Zaktualizowany z wszystkimi nowymi komponentami UI
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -21,6 +21,12 @@ import RiskAnalysis from './features/RiskAnalysis';
 import TrainingAndEducation from './features/TrainingAndEducation';
 import ConsentManagement from './features/ConsentManagement';
 
+// Import nowych komponentów UI zgodnych z trendami 2025
+import CustomCursor from './components/CustomCursor';
+import SoundEffects from './components/SoundEffects';
+import MicroInteractions from './components/MicroInteractions';
+import AntiUsabilityInteractions from './components/AntiUsability';
+
 // Placeholdery dla pozostałych modułów
 const DataMapping = () => <div>Moduł Mapowania Danych</div>;
 const VendorRiskManagement = () => <div>Moduł Zarządzania Ryzykiem Dostawców</div>;
@@ -30,6 +36,11 @@ const App = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        {/* Dodanie nowych komponentów UI */}
+        <CustomCursor />
+        <SoundEffects />
+        <MicroInteractions />
+        <AntiUsabilityInteractions />
         <Router>
           <Routes>
             {/* Ścieżki publiczne */}
