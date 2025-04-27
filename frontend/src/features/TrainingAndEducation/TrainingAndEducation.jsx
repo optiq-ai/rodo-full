@@ -98,4 +98,4 @@ const TrainingAndEducation = () => {
   );
 };
 
-export default TrainingAndEducation;gAndEducation;
+export default TrainingAndEducation;
