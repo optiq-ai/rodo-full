@@ -253,12 +253,13 @@ const RiskAnalysisList = () => {
           data={riskAnalyses}
           columns={columns}
           loading={loading}
-          getRowId={(row) => row.id}
           pagination={true}
           sorting={true}
           filtering={true}
           rowsPerPageOptions={[5, 10, 25]}
           defaultRowsPerPage={10}
+          onRowClick={(row) => handleView(row.id)}
+          title="Analizy ryzyka"
         />
       </Box>
     </Paper>

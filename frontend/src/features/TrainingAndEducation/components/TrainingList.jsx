@@ -99,11 +99,11 @@ const TrainingList = () => {
   }, []);
   
   const handleView = (id) => {
-    navigate(`/training-and-education/${id}`);
+    navigate(`/training/${id}`);
   };
   
   const handleEdit = (id) => {
-    navigate(`/training-and-education/${id}/edit`);
+    navigate(`/training/${id}/edit`);
   };
   
   const handleDelete = (id) => {
@@ -304,12 +304,13 @@ const TrainingList = () => {
           data={trainings}
           columns={columns}
           loading={loading}
-          getRowId={(row) => row.id}
           pagination={true}
           sorting={true}
           filtering={true}
           rowsPerPageOptions={[5, 10, 25]}
           defaultRowsPerPage={10}
+          onRowClick={(row) => handleView(row.id)}
+          title="Szkolenia i edukacja"
         />
       </Box>
     </Paper>
