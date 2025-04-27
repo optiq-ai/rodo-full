@@ -21,6 +21,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import { 
+  BarChart, 
+  Bar, 
+  PieChart, 
+  Pie, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 const RiskAnalyticsOverview = () => {
   const theme = useTheme();
@@ -32,41 +47,43 @@ const RiskAnalyticsOverview = () => {
     const fetchData = async () => {
       try {
         // W rzeczywistej aplikacji byłoby to wywołanie API
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Skracamy czas oczekiwania, aby szybciej zobaczyć dane
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Przykładowe dane
         const mockData = {
-          totalRiskAnalyses: 35,
-          activeRiskAnalyses: 28,
-          completedRiskAnalyses: 7,
-          highRiskCount: 9,
-          mediumRiskCount: 18,
-          lowRiskCount: 8,
-          riskTrend: [
-            { month: 'Styczeń', highRisk: 5, mediumRisk: 12, lowRisk: 6 },
-            { month: 'Luty', highRisk: 7, mediumRisk: 14, lowRisk: 7 },
-            { month: 'Marzec', highRisk: 8, mediumRisk: 16, lowRisk: 7 },
-            { month: 'Kwiecień', highRisk: 9, mediumRisk: 18, lowRisk: 8 }
-          ],
+          totalRiskAnalyses: 24,
+          highRiskCount: 5,
+          mediumRiskCount: 12,
+          lowRiskCount: 7,
+          riskTrends: {
+            changePercentage: -8.3,
+            previousPeriodHighRisk: 6
+          },
           topRiskCategories: [
-            { category: 'Bezpieczeństwo danych', count: 12, percentage: 34.3 },
-            { category: 'Przetwarzanie wrażliwych danych', count: 8, percentage: 22.9 },
-            { category: 'Profilowanie', count: 6, percentage: 17.1 },
-            { category: 'Transfer danych', count: 5, percentage: 14.3 },
-            { category: 'Retencja danych', count: 4, percentage: 11.4 }
+            { category: 'Bezpieczeństwo danych', count: 8, percentage: 33.3 },
+            { category: 'Przetwarzanie wrażliwych danych', count: 6, percentage: 25.0 },
+            { category: 'Profilowanie', count: 5, percentage: 20.8 },
+            { category: 'Przekazywanie danych', count: 3, percentage: 12.5 },
+            { category: 'Inne', count: 2, percentage: 8.4 }
           ],
           mitigationStatus: {
-            implemented: 42,
-            inProgress: 18,
-            planned: 15,
-            notStarted: 8
+            implemented: 18,
+            inProgress: 12,
+            planned: 8,
+            notStarted: 4
           },
-          recentActivity: [
-            { date: '2025-04-25', action: 'created', description: 'Nowa analiza ryzyka dla systemu CRM' },
-            { date: '2025-04-24', action: 'updated', description: 'Aktualizacja analizy ryzyka dla procesu rekrutacji' },
-            { date: '2025-04-23', action: 'completed', description: 'Zakończono analizę ryzyka dla aplikacji mobilnej' },
-            { date: '2025-04-22', action: 'created', description: 'Nowa analiza ryzyka dla procesu marketingowego' },
-            { date: '2025-04-21', action: 'updated', description: 'Aktualizacja analizy ryzyka dla systemu HR' }
+          recentRiskAnalyses: [
+            { id: 1, name: 'Analiza ryzyka - system CRM', level: 'high', date: '2025-04-20', status: 'completed' },
+            { id: 2, name: 'Analiza ryzyka - aplikacja mobilna', level: 'medium', date: '2025-04-18', status: 'in_progress' },
+            { id: 3, name: 'Analiza ryzyka - system HR', level: 'low', date: '2025-04-15', status: 'completed' },
+            { id: 4, name: 'Analiza ryzyka - strona internetowa', level: 'medium', date: '2025-04-10', status: 'completed' }
+          ],
+          monthlyRiskData: [
+            { month: 'Styczeń', high: 4, medium: 10, low: 6 },
+            { month: 'Luty', high: 5, medium: 11, low: 7 },
+            { month: 'Marzec', high: 6, medium: 12, low: 5 },
+            { month: 'Kwiecień', high: 5, medium: 12, low: 7 }
           ]
         };
         
@@ -100,7 +117,7 @@ const RiskAnalyticsOverview = () => {
   return (
     <Box sx={{ mb: 4 }}>
       <Typography variant="h6" component="h2" gutterBottom>
-        Przegląd analityki ryzyka
+        Analityka ryzyka
       </Typography>
       
       <Grid container spacing={3}>
@@ -145,8 +162,13 @@ const RiskAnalyticsOverview = () => {
                 {analytics.totalRiskAnalyses}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {analytics.riskTrends.changePercentage > 0 ? (
+                  <TrendingUpIcon sx={{ color: theme.palette.error.main, mr: 0.5 }} />
+                ) : (
+                  <TrendingDownIcon sx={{ color: theme.palette.success.main, mr: 0.5 }} />
+                )}
                 <Typography variant="body2" color="text.secondary">
-                  Aktywne: {analytics.activeRiskAnalyses} ({Math.round(analytics.activeRiskAnalyses / analytics.totalRiskAnalyses * 100)}%)
+                  {analytics.riskTrends.changePercentage > 0 ? '+' : ''}{analytics.riskTrends.changePercentage}% w porównaniu do poprzedniego okresu
                 </Typography>
               </Box>
             </CardContent>
@@ -231,18 +253,18 @@ const RiskAnalyticsOverview = () => {
                     mr: 2
                   }}
                 >
-                  <SecurityIcon />
+                  <WarningIcon />
                 </Box>
                 <Typography variant="h6" component="div">
-                  Środki zaradcze
+                  Średnie ryzyko
                 </Typography>
               </Box>
               <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
-                {analytics.mitigationStatus.implemented}
+                {analytics.mediumRiskCount}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Wdrożone z {analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted} zaplanowanych
+                  {Math.round(analytics.mediumRiskCount / analytics.totalRiskAnalyses * 100)}% wszystkich analiz
                 </Typography>
               </Box>
             </CardContent>
@@ -282,15 +304,15 @@ const RiskAnalyticsOverview = () => {
                   <CheckCircleIcon />
                 </Box>
                 <Typography variant="h6" component="div">
-                  Zakończone analizy
+                  Niskie ryzyko
                 </Typography>
               </Box>
               <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
-                {analytics.completedRiskAnalyses}
+                {analytics.lowRiskCount}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  {Math.round(analytics.completedRiskAnalyses / analytics.totalRiskAnalyses * 100)}% wszystkich analiz
+                  {Math.round(analytics.lowRiskCount / analytics.totalRiskAnalyses * 100)}% wszystkich analiz
                 </Typography>
               </Box>
             </CardContent>
@@ -320,6 +342,26 @@ const RiskAnalyticsOverview = () => {
               }}
             />
             <CardContent>
+              <Box sx={{ height: 300, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={analytics.topRiskCategories}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="category" />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value, name) => [`${value} (${name === 'count' ? 'ilość' : 'procent'})`, '']}
+                      labelFormatter={(label) => `Kategoria: ${label}`}
+                    />
+                    <Legend />
+                    <Bar dataKey="count" name="Ilość" fill={theme.palette.primary.main} />
+                    <Bar dataKey="percentage" name="Procent" fill={theme.palette.secondary.main} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+              <Divider sx={{ my: 2 }} />
               <Grid container spacing={2}>
                 {analytics.topRiskCategories.map((item, index) => (
                   <Grid item xs={12} key={index}>
@@ -379,6 +421,39 @@ const RiskAnalyticsOverview = () => {
               }}
             />
             <CardContent>
+              <Box sx={{ height: 300, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Wdrożone', value: analytics.mitigationStatus.implemented, color: theme.palette.success.main },
+                        { name: 'W trakcie', value: analytics.mitigationStatus.inProgress, color: theme.palette.warning.main },
+                        { name: 'Zaplanowane', value: analytics.mitigationStatus.planned, color: theme.palette.info.main },
+                        { name: 'Nie rozpoczęte', value: analytics.mitigationStatus.notStarted, color: theme.palette.error.main }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {[
+                        { name: 'Wdrożone', value: analytics.mitigationStatus.implemented, color: theme.palette.success.main },
+                        { name: 'W trakcie', value: analytics.mitigationStatus.inProgress, color: theme.palette.warning.main },
+                        { name: 'Zaplanowane', value: analytics.mitigationStatus.planned, color: theme.palette.info.main },
+                        { name: 'Nie rozpoczęte', value: analytics.mitigationStatus.notStarted, color: theme.palette.error.main }
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value}`, 'Ilość']} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              <Divider sx={{ my: 2 }} />
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Box sx={{ mb: 1 }}>
@@ -396,81 +471,9 @@ const RiskAnalyticsOverview = () => {
                       sx={{ 
                         height: 10, 
                         borderRadius: 5,
-                        backgroundColor: alpha(theme.palette.success.main, 0.1),
+                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '& .MuiLinearProgress-bar': {
                           backgroundColor: theme.palette.success.main
-                        }
-                      }} 
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ mb: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="body2">
-                        W trakcie wdrażania
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        {analytics.mitigationStatus.inProgress} ({Math.round(analytics.mitigationStatus.inProgress / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)}%)
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={Math.round(analytics.mitigationStatus.inProgress / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)} 
-                      sx={{ 
-                        height: 10, 
-                        borderRadius: 5,
-                        backgroundColor: alpha(theme.palette.warning.main, 0.1),
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: theme.palette.warning.main
-                        }
-                      }} 
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ mb: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="body2">
-                        Zaplanowane
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        {analytics.mitigationStatus.planned} ({Math.round(analytics.mitigationStatus.planned / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)}%)
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={Math.round(analytics.mitigationStatus.planned / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)} 
-                      sx={{ 
-                        height: 10, 
-                        borderRadius: 5,
-                        backgroundColor: alpha(theme.palette.info.main, 0.1),
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: theme.palette.info.main
-                        }
-                      }} 
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ mb: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="body2">
-                        Nie rozpoczęte
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        {analytics.mitigationStatus.notStarted} ({Math.round(analytics.mitigationStatus.notStarted / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)}%)
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={Math.round(analytics.mitigationStatus.notStarted / (analytics.mitigationStatus.implemented + analytics.mitigationStatus.inProgress + analytics.mitigationStatus.planned + analytics.mitigationStatus.notStarted) * 100)} 
-                      sx={{ 
-                        height: 10, 
-                        borderRadius: 5,
-                        backgroundColor: alpha(theme.palette.error.main, 0.1),
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: theme.palette.error.main
                         }
                       }} 
                     />
@@ -481,8 +484,8 @@ const RiskAnalyticsOverview = () => {
           </Card>
         </Grid>
         
-        {/* Trend ryzyka */}
-        <Grid item xs={12} md={8}>
+        {/* Wykres trendów ryzyka */}
+        <Grid item xs={12}>
           <Card 
             elevation={0} 
             sx={{ 
@@ -495,7 +498,7 @@ const RiskAnalyticsOverview = () => {
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <TimelineIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
-                  <Typography variant="h6">Trend ryzyka w czasie</Typography>
+                  <Typography variant="h6">Trendy ryzyka w czasie</Typography>
                 </Box>
               }
               sx={{ 
@@ -504,115 +507,23 @@ const RiskAnalyticsOverview = () => {
               }}
             />
             <CardContent>
-              <Box sx={{ height: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around' }}>
-                {analytics.riskTrend.map((item, index) => (
-                  <Box key={index} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '20%' }}>
-                    <Box sx={{ width: '100%', display: 'flex', height: 150 }}>
-                      <Box 
-                        sx={{ 
-                          width: '30%', 
-                          backgroundColor: theme.palette.error.main,
-                          height: `${(item.highRisk / 20) * 100}%`,
-                          alignSelf: 'flex-end',
-                          borderTopLeftRadius: 4,
-                          borderTopRightRadius: 4,
-                          mx: 0.5
-                        }} 
-                      />
-                      <Box 
-                        sx={{ 
-                          width: '30%', 
-                          backgroundColor: theme.palette.warning.main,
-                          height: `${(item.mediumRisk / 20) * 100}%`,
-                          alignSelf: 'flex-end',
-                          borderTopLeftRadius: 4,
-                          borderTopRightRadius: 4,
-                          mx: 0.5
-                        }} 
-                      />
-                      <Box 
-                        sx={{ 
-                          width: '30%', 
-                          backgroundColor: theme.palette.success.main,
-                          height: `${(item.lowRisk / 20) * 100}%`,
-                          alignSelf: 'flex-end',
-                          borderTopLeftRadius: 4,
-                          borderTopRightRadius: 4,
-                          mx: 0.5
-                        }} 
-                      />
-                    </Box>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      {item.month}
-                    </Typography>
-                  </Box>
-                ))}
+              <Box sx={{ height: 300, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={analytics.monthlyRiskData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="high" name="Wysokie ryzyko" stroke={theme.palette.error.main} strokeWidth={2} />
+                    <Line type="monotone" dataKey="medium" name="Średnie ryzyko" stroke={theme.palette.warning.main} strokeWidth={2} />
+                    <Line type="monotone" dataKey="low" name="Niskie ryzyko" stroke={theme.palette.success.main} strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
               </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
-                  <Box sx={{ width: 12, height: 12, backgroundColor: theme.palette.error.main, mr: 1, borderRadius: 1 }} />
-                  <Typography variant="body2">Wysokie</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
-                  <Box sx={{ width: 12, height: 12, backgroundColor: theme.palette.warning.main, mr: 1, borderRadius: 1 }} />
-                  <Typography variant="body2">Średnie</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Box sx={{ width: 12, height: 12, backgroundColor: theme.palette.success.main, mr: 1, borderRadius: 1 }} />
-                  <Typography variant="body2">Niskie</Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        {/* Ostatnia aktywność */}
-        <Grid item xs={12} md={4}>
-          <Card 
-            elevation={0} 
-            sx={{ 
-              height: '100%',
-              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-              boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
-              borderRadius: 2
-            }}
-          >
-            <CardHeader
-              title={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <TimelineIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
-                  <Typography variant="h6">Ostatnia aktywność</Typography>
-                </Box>
-              }
-              sx={{ 
-                backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-              }}
-            />
-            <CardContent>
-              {analytics.recentActivity.map((activity, index) => (
-                <Box key={index} sx={{ mb: 2 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      {new Date(activity.date).toLocaleDateString()}
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      color: activity.action === 'created' ? theme.palette.info.main : 
-                             activity.action === 'updated' ? theme.palette.warning.main : 
-                             theme.palette.success.main,
-                      fontWeight: 'bold'
-                    }}>
-                      {activity.action === 'created' ? 'Utworzono' : 
-                       activity.action === 'updated' ? 'Zaktualizowano' : 
-                       'Zakończono'}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2">
-                    {activity.description}
-                  </Typography>
-                  <Divider sx={{ mt: 1 }} />
-                </Box>
-              ))}
             </CardContent>
           </Card>
         </Grid>

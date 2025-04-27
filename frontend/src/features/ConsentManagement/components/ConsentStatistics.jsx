@@ -22,6 +22,21 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import { 
+  BarChart, 
+  Bar, 
+  PieChart, 
+  Pie, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 const ConsentStatistics = () => {
   const theme = useTheme();
@@ -313,38 +328,26 @@ const ConsentStatistics = () => {
               }}
             />
             <CardContent>
-              <Grid container spacing={2}>
-                {statistics.consentsByType.map((item, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Box sx={{ mb: 1 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                        <Typography variant="body2">
-                          {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                        </Typography>
-                        <Typography variant="body2" fontWeight="bold">
-                          {item.count} ({item.percentage}%)
-                        </Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={item.percentage} 
-                        sx={{ 
-                          height: 10, 
-                          borderRadius: 5,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: index === 0 ? theme.palette.primary.main :
-                                           index === 1 ? theme.palette.secondary.main :
-                                           index === 2 ? theme.palette.error.main :
-                                           index === 3 ? theme.palette.warning.main :
-                                           theme.palette.info.main
-                          }
-                        }} 
-                      />
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
+              <Box sx={{ height: 300, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={statistics.consentsByType}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="type" tickFormatter={(value) => value.charAt(0).toUpperCase() + value.slice(1)} />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value, name) => [`${value} (${name === 'count' ? 'ilość' : 'procent'})`, '']}
+                      labelFormatter={(label) => `Typ: ${label.charAt(0).toUpperCase() + label.slice(1)}`}
+                    />
+                    <Legend />
+                    <Bar dataKey="count" name="Ilość" fill={theme.palette.primary.main} />
+                    <Bar dataKey="percentage" name="Procent" fill={theme.palette.secondary.main} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+              <Divider sx={{ my: 2 }} />
             </CardContent>
           </Card>
         </Grid>
@@ -373,41 +376,57 @@ const ConsentStatistics = () => {
               }}
             />
             <CardContent>
-              <Box sx={{ textAlign: 'center', mb: 3 }}>
-                <Typography variant="h5" component="div" sx={{ mb: 1 }}>
-                  {statistics.consentTrends.changePercentage > 0 ? '+' : ''}{statistics.consentTrends.changePercentage}%
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {statistics.consentTrends.changePercentage > 0 ? (
-                    <TrendingUpIcon sx={{ color: theme.palette.success.main, mr: 0.5 }} />
-                  ) : (
-                    <TrendingDownIcon sx={{ color: theme.palette.error.main, mr: 0.5 }} />
-                  )}
-                  <Typography variant="body2" color="text.secondary">
-                    Zmiana w ostatnim miesiącu
-                  </Typography>
-                </Box>
+              <Box sx={{ height: 300, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Aktywne', value: statistics.activeConsents, color: theme.palette.success.main },
+                        { name: 'Nieaktywne', value: statistics.inactiveConsents, color: theme.palette.error.main },
+                        { name: 'Oczekujące', value: statistics.pendingConsents, color: theme.palette.warning.main }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {[
+                        { name: 'Aktywne', value: statistics.activeConsents, color: theme.palette.success.main },
+                        { name: 'Nieaktywne', value: statistics.inactiveConsents, color: theme.palette.error.main },
+                        { name: 'Oczekujące', value: statistics.pendingConsents, color: theme.palette.warning.main }
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value}`, 'Ilość']} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
               </Box>
               
-              <Divider sx={{ my: 2 }} />
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h6" component="div" color="success.main">
-                    +{statistics.consentTrends.newLastMonth}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Nowe zgody
-                  </Typography>
-                </Box>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h6" component="div" color="error.main">
-                    -{statistics.consentTrends.revokedLastMonth}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Wycofane zgody
-                  </Typography>
-                </Box>
+              <Box sx={{ height: 300, width: '100%', mt: 2 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={[
+                      { date: '2025-01', created: 18, revoked: 5 },
+                      { date: '2025-02', created: 22, revoked: 7 },
+                      { date: '2025-03', created: 19, revoked: 6 },
+                      { date: '2025-04', created: 23, revoked: 8 }
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="created" name="Nowe zgody" stroke={theme.palette.success.main} strokeWidth={2} />
+                    <Line type="monotone" dataKey="revoked" name="Wycofane zgody" stroke={theme.palette.error.main} strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
               </Box>
               
               <Divider sx={{ my: 2 }} />
