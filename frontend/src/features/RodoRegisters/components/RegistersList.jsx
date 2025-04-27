@@ -242,16 +242,16 @@ const RegistersList = () => {
       
       <Box sx={{ height: 500, width: '100%', p: 3, pt: 1 }}>
         <DataTable
-          rows={registers}
+          data={registers}
           columns={columns}
           loading={loading}
-          getRowId={(row) => row.id}
-          pageSizeOptions={[5, 10, 25]}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10 },
-            },
-          }}
+          pagination={true}
+          sorting={true}
+          filtering={true}
+          rowsPerPageOptions={[5, 10, 25]}
+          defaultRowsPerPage={10}
+          onRowClick={(row) => handleView(row.id)}
+          title="Rejestry czynności przetwarzania"
         />
       </Box>
     </Paper>
