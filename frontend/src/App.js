@@ -1,7 +1,7 @@
-// src/App.js - Dodanie brakujących sekcji do górnego menu i poprawa skalowania
+// src/App.js - Usunięcie górnego menu i pozostawienie tylko paska bocznego
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Box, AppBar, Toolbar, Typography, Button, Container, CssBaseline, Menu, MenuItem, IconButton, useMediaQuery, useTheme, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Container, CssBaseline, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import theme, { createThemeWithMode } from './config/theme';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -64,24 +64,13 @@ const PlaceholderComponent = ({ title }) => (
     <Typography variant="body1" sx={{ maxWidth: '600px', mb: 3, color: 'text.secondary' }}>
       Ta sekcja jest w trakcie rozwoju. Wkrótce pojawią się tutaj nowe funkcjonalności i dane.
     </Typography>
-    <Button 
-      variant="contained" 
-      color="primary"
-      sx={{ mt: 2 }}
-    >
-      Odśwież
-    </Button>
   </Box>
 );
 
 function App() {
   const [currentThemeMode, setCurrentThemeMode] = useState('light');
   const currentTheme = React.useMemo(() => createThemeWithMode(currentThemeMode), [currentThemeMode]);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [settingsMenuAnchorEl, setSettingsMenuAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(true); // Domyślnie otwarte na większych ekranach
 
   const handleThemeChange = (mode) => {
     setCurrentThemeMode(mode);
@@ -91,17 +80,7 @@ function App() {
     setDrawerOpen(!drawerOpen);
   };
 
-  const handleSettingsMenuOpen = (event) => {
-    setSettingsMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleSettingsMenuClose = () => {
-    setSettingsMenuAnchorEl(null);
-  };
-
-  const isSettingsMenuOpen = Boolean(settingsMenuAnchorEl);
-
-  // Wszystkie sekcje nawigacji (bez ustawień, które będą w prawym górnym rogu)
+  // Wszystkie sekcje nawigacji
   const navigationItems = [
     { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { label: 'Dokumenty', path: '/documents', icon: <FolderIcon /> },
@@ -116,107 +95,7 @@ function App() {
     { label: 'Ryzyko Dostawców', path: '/vendor-risk', icon: <BusinessIcon /> }
   ];
 
-  // Dla większych ekranów, pokazujemy tylko część elementów w górnym pasku
-  // a resztę w menu rozwijane "Więcej"
-  const visibleNavItems = isTablet ? navigationItems.slice(0, 4) : navigationItems.slice(0, 7);
-  const moreNavItems = isTablet ? navigationItems.slice(4) : navigationItems.slice(7);
-
-  const drawer = (
-    <Box sx={{ width: 250 }} role="presentation">
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="h6" component="div">
-          RODO App
-        </Typography>
-      </Box>
-      <Divider />
-      <List>
-        {navigationItems.map((item, index) => (
-          <ListItem 
-            button 
-            key={index} 
-            component={Link} 
-            to={item.path}
-            onClick={() => setDrawerOpen(false)}
-          >
-            <ListItemIcon>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.label} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        <ListItem 
-          button 
-          component={Link} 
-          to="/settings"
-          onClick={() => setDrawerOpen(false)}
-        >
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Ustawienia" />
-        </ListItem>
-      </List>
-    </Box>
-  );
-
-  const renderSettingsMenu = (
-    <Menu
-      anchorEl={settingsMenuAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isSettingsMenuOpen}
-      onClose={handleSettingsMenuClose}
-    >
-      <MenuItem 
-        component={Link} 
-        to="/settings"
-        onClick={handleSettingsMenuClose}
-      >
-        Ustawienia
-      </MenuItem>
-    </Menu>
-  );
-
-  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState(null);
-  const isMoreMenuOpen = Boolean(moreMenuAnchorEl);
-
-  const handleMoreMenuOpen = (event) => {
-    setMoreMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleMoreMenuClose = () => {
-    setMoreMenuAnchorEl(null);
-  };
-
-  const renderMoreMenu = (
-    <Menu
-      anchorEl={moreMenuAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMoreMenuOpen}
-      onClose={handleMoreMenuClose}
-    >
-      {moreNavItems.map((item, index) => (
-        <MenuItem 
-          key={index} 
-          component={Link} 
-          to={item.path}
-          onClick={handleMoreMenuClose}
-          sx={{ display: 'flex', alignItems: 'center' }}
-        >
-          <Box component="span" sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
-            {item.icon}
-          </Box>
-          {item.label}
-        </MenuItem>
-      ))}
-    </Menu>
-  );
+  const drawerWidth = 250;
 
   return (
     <ThemeProvider theme={currentTheme}>
@@ -225,109 +104,144 @@ function App() {
       <SoundEffects />
       <MicroInteractions />
       <Router>
-        <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static">
-            <Toolbar sx={{ 
-              flexWrap: 'wrap',
-              minHeight: { xs: '64px', sm: '64px' },
-              px: { xs: 1, sm: 2, md: 3 }
-            }}>
-              {/* Logo i przycisk menu dla urządzeń mobilnych */}
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={handleDrawerToggle}
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography 
-                  variant="h6" 
-                  component="div" 
-                  sx={{ 
-                    fontSize: { xs: '1.1rem', sm: '1.25rem' }
-                  }}
-                >
-                  RODO App
-                </Typography>
-              </Box>
-              
-              {/* Główne elementy nawigacji (widoczne na większych ekranach) */}
-              <Box sx={{ 
-                display: 'flex', 
-                flexGrow: 1,
-                ml: 2,
-                overflow: 'hidden',
-                '& > *': { mx: 0.5 }
-              }}>
-                {visibleNavItems.map((item, index) => (
-                  <Button 
-                    key={index} 
-                    color="inherit" 
-                    component={Link} 
-                    to={item.path}
-                    sx={{ 
-                      fontSize: '0.875rem',
-                      px: { md: 1, lg: 1.5 },
-                      whiteSpace: 'nowrap'
-                    }}
-                    startIcon={item.icon}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
-                
-                {/* Przycisk "Więcej" dla dodatkowych elementów */}
-                {moreNavItems.length > 0 && (
-                  <Button
-                    color="inherit"
-                    onClick={handleMoreMenuOpen}
-                    sx={{ 
-                      fontSize: '0.875rem',
-                      px: { md: 1, lg: 1.5 },
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    Więcej
-                  </Button>
-                )}
-              </Box>
-              
-              {/* Przycisk ustawień (zawsze widoczny) */}
+        <Box sx={{ display: 'flex' }}>
+          {/* AppBar tylko z przyciskiem menu i tytułem */}
+          <AppBar 
+            position="fixed" 
+            sx={{ 
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` }
+            }}
+          >
+            <Toolbar>
               <IconButton
-                size="large"
-                edge="end"
                 color="inherit"
-                aria-label="ustawienia"
-                onClick={handleSettingsMenuOpen}
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2, display: { sm: 'none' } }}
               >
-                <SettingsIcon />
+                <MenuIcon />
               </IconButton>
+              <Typography variant="h6" noWrap component="div">
+                RODO App
+              </Typography>
             </Toolbar>
           </AppBar>
           
-          {/* Drawer dla urządzeń mobilnych */}
-          <Drawer
-            variant="temporary"
-            open={drawerOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile
-            }}
-            sx={{
-              display: { xs: 'block' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 250 },
+          {/* Stały pasek boczny dla większych ekranów i tymczasowy dla mobilnych */}
+          <Box
+            component="nav"
+            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          >
+            {/* Mobilna wersja szuflady */}
+            <Drawer
+              variant="temporary"
+              open={drawerOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true, // Lepsze działanie na urządzeniach mobilnych
+              }}
+              sx={{
+                display: { xs: 'block', sm: 'none' },
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+              }}
+            >
+              <Box sx={{ width: drawerWidth }} role="presentation">
+                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Typography variant="h6" component="div">
+                    RODO App
+                  </Typography>
+                </Box>
+                <Divider />
+                <List>
+                  {navigationItems.map((item, index) => (
+                    <ListItem 
+                      button 
+                      key={index} 
+                      component={Link} 
+                      to={item.path}
+                      onClick={() => setDrawerOpen(false)}
+                    >
+                      <ListItemIcon>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={item.label} />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  <ListItem 
+                    button 
+                    component={Link} 
+                    to="/settings"
+                    onClick={() => setDrawerOpen(false)}
+                  >
+                    <ListItemIcon>
+                      <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Ustawienia" />
+                  </ListItem>
+                </List>
+              </Box>
+            </Drawer>
+            
+            {/* Stała wersja szuflady dla większych ekranów */}
+            <Drawer
+              variant="permanent"
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+              }}
+              open
+            >
+              <Toolbar /> {/* Przestrzeń na AppBar */}
+              <Box sx={{ overflow: 'auto' }}>
+                <List>
+                  {navigationItems.map((item, index) => (
+                    <ListItem 
+                      button 
+                      key={index} 
+                      component={Link} 
+                      to={item.path}
+                    >
+                      <ListItemIcon>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={item.label} />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  <ListItem 
+                    button 
+                    component={Link} 
+                    to="/settings"
+                  >
+                    <ListItemIcon>
+                      <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Ustawienia" />
+                  </ListItem>
+                </List>
+              </Box>
+            </Drawer>
+          </Box>
+          
+          {/* Główna zawartość */}
+          <Box
+            component="main"
+            sx={{ 
+              flexGrow: 1, 
+              p: 3, 
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` },
+              mt: '64px' // Wysokość AppBar
             }}
           >
-            {drawer}
-          </Drawer>
-          
-          {renderSettingsMenu}
-          {renderMoreMenu}
-          
-          <Container sx={{ mt: 4 }}>
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/documents" element={<DocumentManagement />} />
@@ -342,7 +256,7 @@ function App() {
               <Route path="/data-mapping" element={<DataMapping />} />
               <Route path="/vendor-risk" element={<VendorRiskManagement />} />
             </Routes>
-          </Container>
+          </Box>
         </Box>
       </Router>
     </ThemeProvider>
