@@ -1,4 +1,4 @@
-// src/components/DataTable/DataTable.jsx
+// src/components/DataTable/DataTable.jsx - Zmodyfikowany komponent z ulepszonym pustym stanem
 import React, { useState } from 'react';
 import {
   Table,
@@ -28,6 +28,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import EmptyState from '../EmptyState';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -68,7 +69,8 @@ const DataTable = ({
   defaultRowsPerPage = 10,
   onRowClick,
   onRefresh,
-  actions
+  actions,
+  emptyStateProps
 }) => {
   const theme = useTheme();
   const [order, setOrder] = useState('asc');
@@ -201,6 +203,22 @@ const DataTable = ({
     }
 
     return value;
+  };
+
+  // Określenie wariantu pustego stanu
+  let emptyStateVariant = 'default';
+  if (loading) {
+    emptyStateVariant = 'loading';
+  } else if (searchTerm) {
+    emptyStateVariant = 'search';
+  }
+
+  // Domyślne właściwości pustego stanu
+  const defaultEmptyStateProps = {
+    variant: emptyStateVariant,
+    onAction: onRefresh,
+    actionLabel: searchTerm ? 'Wyczyść filtry' : 'Odśwież',
+    ...(emptyStateProps || {})
   };
 
   return (
@@ -343,14 +361,7 @@ const DataTable = ({
               ) : paginatedData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center" sx={{ py: 5 }}>
-                    <Typography variant="body1">
-                      Brak danych do wyświetlenia
-                    </Typography>
-                    {searchTerm && (
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                        Spróbuj zmienić kryteria wyszukiwania
-                      </Typography>
-                    )}
+                    <EmptyState {...defaultEmptyStateProps} />
                   </TableCell>
                 </TableRow>
               ) : (
