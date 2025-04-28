@@ -1,4 +1,4 @@
-// src/App.js - Usunięcie górnego menu i pozostawienie tylko paska bocznego
+// src/App.js - Dodanie nowej sekcji Oceny RODO
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Typography, Container, CssBaseline, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material';
@@ -18,6 +18,7 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import StorageIcon from '@mui/icons-material/Storage';
 import BusinessIcon from '@mui/icons-material/Business';
 import FolderIcon from '@mui/icons-material/Folder';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'; // Ikona dla Oceny RODO
 
 // Import komponentów
 import Dashboard from './features/Dashboard';
@@ -32,40 +33,12 @@ import ConsentManagement from './features/ConsentManagement';
 import DataMapping from './features/DataMapping';
 import VendorRiskManagement from './features/VendorRiskManagement';
 import DocumentManagement from './features/DocumentManagement';
+import RodoAssessment from './features/RodoAssessment'; // Import nowej sekcji
 
 // Import komponentów efektów
 import CustomCursor from './components/CustomCursor';
 import SoundEffects from './components/SoundEffects';
 import MicroInteractions from './components/MicroInteractions';
-
-// Komponent placeholder dla brakujących sekcji
-const PlaceholderComponent = ({ title }) => (
-  <Box sx={{ 
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    minHeight: '60vh',
-    textAlign: 'center',
-    p: 3,
-    backgroundColor: 'rgba(78, 205, 196, 0.05)',
-    borderRadius: 2,
-    boxShadow: '0 4px 20px rgba(78, 205, 196, 0.1)',
-    border: '1px dashed rgba(78, 205, 196, 0.3)'
-  }}>
-    <img 
-      src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" 
-      alt="Ilustracja" 
-      style={{ width: '120px', marginBottom: '24px', opacity: 0.7 }} 
-    />
-    <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-      {title}
-    </Typography>
-    <Typography variant="body1" sx={{ maxWidth: '600px', mb: 3, color: 'text.secondary' }}>
-      Ta sekcja jest w trakcie rozwoju. Wkrótce pojawią się tutaj nowe funkcjonalności i dane.
-    </Typography>
-  </Box>
-);
 
 function App() {
   const [currentThemeMode, setCurrentThemeMode] = useState('light');
@@ -86,6 +59,7 @@ function App() {
     { label: 'Dokumenty', path: '/documents', icon: <FolderIcon /> },
     { label: 'Rejestry RODO', path: '/', icon: <ListAltIcon /> },
     { label: 'Analiza Ryzyka', path: '/risk-analysis', icon: <AssessmentIcon /> },
+    { label: 'Ocena RODO', path: '/rodo-assessment', icon: <PlaylistAddCheckIcon /> }, // Dodano nową sekcję
     { label: 'Incydenty', path: '/incidents', icon: <ErrorIcon /> },
     { label: 'Wnioski Podmiotów', path: '/subject-requests', icon: <ContactMailIcon /> },
     { label: 'Szkolenia', path: '/training', icon: <SchoolIcon /> },
@@ -247,6 +221,7 @@ function App() {
               <Route path="/documents" element={<DocumentManagement />} />
               <Route path="/" element={<RodoRegisters />} />
               <Route path="/risk-analysis" element={<RiskAnalysis />} />
+              <Route path="/rodo-assessment" element={<RodoAssessment />} /> {/* Dodano trasę dla nowej sekcji */}
               <Route path="/incidents" element={<IncidentManagement />} />
               <Route path="/subject-requests" element={<SubjectRequestsManagement />} />
               <Route path="/training" element={<TrainingAndEducation />} />
