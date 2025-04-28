@@ -1,12 +1,19 @@
-import React from 'react';
-import { Box, Typography, Paper, Grid, Card, CardContent, TextField, Button, Divider } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Paper, Grid, Card, CardContent, TextField, Button, Divider, Dialog, DialogContent } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import DataMappingForm from './DataMappingForm';
 
 // Komponent listy mapowań danych
 const DataMappingList = () => {
+  // Stan dla formularza
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedMapping, setSelectedMapping] = useState(null);
+  const [formMode, setFormMode] = useState('create');
+  const [searchTerm, setSearchTerm] = useState('');
+
   // Przykładowe dane
   const rows = [
     { id: 1, name: 'Dane klientów - marketing', category: 'Marketing', status: 'Aktywne', lastUpdated: '2025-04-15', riskLevel: 'Niskie' },
@@ -18,6 +25,36 @@ const DataMappingList = () => {
     { id: 7, name: 'Dane marketingowe - newsletter', category: 'Marketing', status: 'Aktywne', lastUpdated: '2025-04-18', riskLevel: 'Niskie' },
     { id: 8, name: 'Dane kontrahentów', category: 'Sprzedaż', status: 'Aktywne', lastUpdated: '2025-04-01', riskLevel: 'Średnie' },
   ];
+
+  // Filtrowanie danych na podstawie wyszukiwania
+  const filteredRows = rows.filter(row => 
+    row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    row.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Obsługa otwierania formularza do tworzenia nowego mapowania
+  const handleAddNew = () => {
+    setSelectedMapping(null);
+    setFormMode('create');
+    setOpenForm(true);
+  };
+
+  // Obsługa otwierania formularza do edycji istniejącego mapowania
+  const handleEdit = (mapping) => {
+    setSelectedMapping(mapping);
+    setFormMode('edit');
+    setOpenForm(true);
+  };
+
+  // Obsługa zamykania formularza
+  const handleCloseForm = () => {
+    setOpenForm(false);
+  };
+
+  // Obsługa wyszukiwania
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   // Kolumny dla DataGrid
   const columns = [
@@ -33,7 +70,14 @@ const DataMappingList = () => {
       width: 150,
       renderCell: (params) => (
         <Box>
-          <Button size="small" variant="outlined" sx={{ mr: 1 }}>Edytuj</Button>
+          <Button 
+            size="small" 
+            variant="outlined" 
+            sx={{ mr: 1 }}
+            onClick={() => handleEdit(params.row)}
+          >
+            Edytuj
+          </Button>
           <Button size="small" variant="outlined" color="error">Usuń</Button>
         </Box>
       ),
@@ -57,6 +101,7 @@ const DataMappingList = () => {
               variant="contained" 
               startIcon={<AddIcon />}
               sx={{ mr: 2 }}
+              onClick={handleAddNew}
             >
               Dodaj nowe
             </Button>
@@ -80,17 +125,20 @@ const DataMappingList = () => {
             }}
             variant="outlined"
             size="small"
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
         </Box>
 
         <Box sx={{ height: 400, width: '100%' }}>
           <DataGrid
-            rows={rows}
+            rows={filteredRows}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
             checkboxSelection
             disableSelectionOnClick
+            onRowClick={(params) => handleEdit(params.row)}
             sx={{
               '& .MuiDataGrid-cell:hover': {
                 color: 'primary.main',
@@ -99,6 +147,22 @@ const DataMappingList = () => {
           />
         </Box>
       </Paper>
+
+      {/* Dialog z formularzem mapowania danych */}
+      <Dialog 
+        open={openForm} 
+        onClose={handleCloseForm}
+        fullWidth
+        maxWidth="lg"
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <DataMappingForm 
+            mode={formMode} 
+            mapping={selectedMapping} 
+            onClose={handleCloseForm} 
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
