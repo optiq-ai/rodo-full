@@ -13,13 +13,6 @@ services:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:5000
     restart: unless-stopped
-    networks:
-      - default
-
-networks:
-  default:
-    name: rodo-full_default
-    external: true
 
 volumes:
   frontend_data:
