@@ -20,16 +20,14 @@ import RodoRegisters from './features/RodoRegisters';
 import RiskAnalysis from './features/RiskAnalysis';
 import TrainingAndEducation from './features/TrainingAndEducation';
 import ConsentManagement from './features/ConsentManagement';
+import DataMapping from './features/DataMapping';
+import VendorRiskManagement from './features/VendorRiskManagement';
 
 // Import nowych komponentów UI zgodnych z trendami 2025
 import CustomCursor from './components/CustomCursor';
 import SoundEffects from './components/SoundEffects';
 import MicroInteractions from './components/MicroInteractions';
 import AntiUsabilityInteractions from './components/AntiUsability';
-
-// Placeholdery dla pozostałych modułów
-const DataMapping = () => <div>Moduł Mapowania Danych</div>;
-const VendorRiskManagement = () => <div>Moduł Zarządzania Ryzykiem Dostawców</div>;
 
 const App = () => {
   return (
