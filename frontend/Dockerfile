@@ -10,6 +10,9 @@ COPY . .
 # Naprawienie problemu z uprawnieniami do katalogu cache
 RUN mkdir -p /app/node_modules/.cache && chmod 777 /app/node_modules/.cache
 
-EXPOSE 3000
+# Instalacja biblioteki three
+RUN npm install three --save
+
+EXPOSE 3333
 
 CMD ["npm", "start"]
