@@ -102,7 +102,7 @@ const HorizontalScroller = ({
   }, [isDragging, startX, scrollLeft, snapScroll]);
 
   // Funkcje do przewijania w lewo i prawo
-  const scrollLeft = () => {
+  const handleScrollLeft = () => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
     
@@ -150,7 +150,7 @@ const HorizontalScroller = ({
     >
       {showControls && showLeftArrow && (
         <IconButton
-          onClick={scrollLeft}
+          onClick={handleScrollLeft}
           sx={{
             position: 'absolute',
             left: 16,
